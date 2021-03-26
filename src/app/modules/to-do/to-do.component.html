@@ -1,0 +1,61 @@
+<div class="to-do-page-container">
+
+    <div class="add-new-task" (click)="addNewToDo()">
+        <svg-icon class="add-new-task-icon" src="assets/icons/plus-button.svg"></svg-icon>
+        <span class="add-new-task-text">New Task</span>
+    </div>
+    <ngx-datatable style="max-height: 80%; margin: 30px 50px" #mydatatable class="material" [reorderable]="false"
+        [swapColumns]="false" [headerHeight]="50" [limit]="5" [columnMode]="ColumnMode.force" [footerHeight]="50"
+        [rows]="rows" [scrollbarV]="true" [rowHeight]="50" [columns]="columns">
+        <ngx-datatable-column name="Title">
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+                <span class="row-data" *ngIf="editingRowIndex !== rowIndex">
+                    {{ value }}
+                </span>
+                <input class="search-input" autofocus *ngIf="editingRowIndex === rowIndex" type="text"
+                    [(ngModel)]="editingRow.title" />
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Description">
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row" let-value="value">
+                <span class="row-data" *ngIf="editingRowIndex !== rowIndex">
+                    {{ value }}
+                </span>
+                <input class="search-input" autofocus *ngIf="editingRowIndex === rowIndex" type="text"
+                    [(ngModel)]="editingRow.description" />
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Due date">
+            <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex">
+                <span class="row-data" *ngIf="editingRowIndex !== rowIndex">
+                    {{ value | date : 'dd/MM/yyyy'}}
+                </span>
+                <div class="date-container" *ngIf="editingRowIndex === rowIndex">
+                    <input [owlDateTimeTrigger]="dueDatePicker" [owlDateTime]="dueDatePicker"
+                        [(ngModel)]="editingRow.dueDate" readonly>
+                    <owl-date-time #dueDatePicker [pickerType]="'calendar'"></owl-date-time>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row">
+                <div class="actions-container">
+                    <div class="action yellow-action"
+                        (click)="editingRowIndex === rowIndex ? cancelEdit() : editRowValue(rowIndex)">
+                        <svg-icon class="action-icon" *ngIf="editingRowIndex !== rowIndex" src="assets/icons/edit.svg">
+                        </svg-icon>
+                        <svg-icon class="action-icon" *ngIf="editingRowIndex === rowIndex" src="assets/icons/close.svg">
+                        </svg-icon>
+                    </div>
+                    <div *ngIf="editingRowIndex !== rowIndex" class="action red-action" (click)="deleteToDo(row)">
+                        <svg-icon class="action-icon" src="assets/icons/side-nav/delete.svg"></svg-icon>
+                    </div>
+                    <div class="action green-action"
+                        (click)="editingRowIndex === rowIndex ? updateRowValues(): finishTask(rowIndex)">
+                        <svg-icon class="action-icon" src="assets/icons/tick-1.svg"></svg-icon>
+                    </div>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+</div>
